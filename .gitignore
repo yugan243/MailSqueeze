@@ -1,0 +1,12 @@
+# Ignore Python virtual environment folder
+venv/
+
+# Ignore environment variables file
+.env
+
+# Ignore token files
+token.pickle
+token.json
+
+# Ignore credentials
+credentials.json
