@@ -5,8 +5,8 @@ venv/
 .env
 
 # Ignore token files
-token.pickle
-token.json
+tokens.pickle
+tokens.json
 
 # Ignore credentials
 credentials.json
