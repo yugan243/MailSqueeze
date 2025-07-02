@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Markdown-%23000000.svg?style=flat&logo=markdown&logoColor=white"/>
   <img src="https://img.shields.io/badge/Python-FFD43B?logo=python&logoColor=blue" />
-  <img src="https://img.shields.io/badge/OpenAI-API-green" />
+  <img src="https://img.shields.io/badge/Gemini-2.5%20Flash-blueviolet" />
   <img src="https://img.shields.io/badge/Google%20Gmail-red?logo=gmail&logoColor=white" />
   <img src="https://img.shields.io/badge/Pytest-blueviolet" />
 </p>
