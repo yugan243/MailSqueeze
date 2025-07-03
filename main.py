@@ -24,9 +24,19 @@ def get_gmail_service():
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+        else:  
+            flow = InstalledAppFlow.from_client_config(
+                {
+                    "installed": {
+                        "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+                        "project_id": "mailsqueeze-bot", 
+                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                        "token_uri": "https://oauth2.googleapis.com/token",
+                        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                        "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+                        "redirect_uris": ["http://localhost"]
+                    }
+                }, SCOPES)
             creds = flow.run_local_server(port=0)
             
         with open('tokens.json', 'w') as token:

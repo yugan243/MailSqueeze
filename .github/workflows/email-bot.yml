@@ -13,13 +13,7 @@ jobs:
       - name : checkout
         uses : actions/checkout@v3
 
-      - name: Create credentials.json from base64 secret
-        run: |
-          echo "${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}" | base64 --decode > credentials.json
 
-      - name: Verify credentials.json
-        run: cat credentials.json
-        
       - name : Set up Python
         uses : actions/setup-python@v4
         with:
@@ -32,6 +26,8 @@ jobs:
 
       - name : Run bot
         env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
