@@ -13,8 +13,9 @@ jobs:
       - name : checkout
         uses : actions/checkout@v3
 
-      - name: Create credentials.json file
-        run: echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" > credentials.json
+      - name: Create credentials.json from base64 secret
+        run: |
+          echo "${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}" | base64 --decode > credentials.json
 
       - name : Set up Python
         uses : actions/setup-python@v4
