@@ -17,6 +17,9 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}" | base64 --decode > credentials.json
 
+      - name: Verify credentials.json
+        run: cat credentials.json
+        
       - name : Set up Python
         uses : actions/setup-python@v4
         with:
