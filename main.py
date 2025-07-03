@@ -98,8 +98,9 @@ messages = get_unread_emails(service)
 if not messages:
     print("No unread emails found.")
 else:
+    print("Unread emails are summarizing and sending to telegram\n")
     for msg in messages:
         text = get_email_body(service, msg['id'])
         summary = summarize_with_gemini(text)
-        print("Summary:\n", summary)
         send_to_telegram(f"📧 New Email Summary:\n{summary}")
+        print("processed email with ID:", msg['id'])
