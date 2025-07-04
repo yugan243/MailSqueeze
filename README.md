@@ -54,6 +54,7 @@ Managing overwhelming inboxes is a challenge for developers, teams, and producti
 - 🔄 **Workflow Automation:** Supports scheduled tasks for daily or on-demand email digests.
 - 🔗 **API Integration:** Seamlessly connects Gmail, Google Gemini, and Telegram APIs.
 - 🧪 **Testable:** Built with Jupyter Notebooks for easy prototyping and continuous integration with Pytest.
+- ✅ **Auto-Mark as Read:** **Automatically marks each email as read after it’s processed and summarized, ensuring no email is summarized twice.** 
 
 ---
 
@@ -67,11 +68,16 @@ The core architecture is modular, with the following major components:
 - **Notifications:** Delivers summaries to Telegram via bot API.
 - **Scheduler:** (Optional) Automates periodic polling and notifications (can be run as a cron job or via notebook).
 
+
 ```
 +----------+      +--------------+      +----------------+      +---------------+
 |  Gmail   | ---> | Content      | ---> | Gemini AI      | ---> | Telegram Bot  |
 |  Inbox   |      | Extraction   |      | Summarization  |      | Notification  |
 +----------+      +--------------+      +----------------+      +---------------+
+     |                                                                  ^
+     |                        +--------------------+                   |
+     +----------------------> | Mark as Read Logic | <-----------------+
+                              +--------------------+
 ```
 
 ---
