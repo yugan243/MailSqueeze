@@ -2,7 +2,7 @@ name : Email Summary Bot
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Runs every day at 9 AM UTC
+    - cron: '0 */6 * * *'  # Runs every 6 hours
   workflow_dispatch:
 
 jobs:
