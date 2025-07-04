@@ -14,9 +14,18 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 #Gmail Authentication function
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def get_gmail_service():
+    """
+    Authenticates and creates a Gmail API service instance.
+
+    Uses OAuth 2.0 credentials from 'tokens.json' if available and valid.
+    Otherwise, initiates the OAuth flow to obtain new credentials.
+
+    Returns:
+        service: Authorized Gmail API service instance.
+    """
     creds = None
     if os.path.exists('tokens.json'):
         creds = Credentials.from_authorized_user_file('tokens.json', SCOPES)
@@ -48,6 +57,18 @@ def get_gmail_service():
 
 #Function to fetch unread email IDs
 def get_unread_emails(service, max_results=5):
+    """
+    Fetches unread email message IDs from the user's Gmail inbox.
+
+    Args:
+        service: Authorized Gmail API service instance.
+        max_results: Maximum number of unread messages to fetch (default is 5).
+
+    Returns:
+        list of dict: A list of messages, each represented as a dictionary 
+                      containing message metadata including the 'id'.
+                      Returns an empty list if no unread emails are found.
+    """
     results = service.users().messages().list(
         userId='me', 
         labelIds=['INBOX'], 
@@ -58,6 +79,17 @@ def get_unread_emails(service, max_results=5):
 
 #Function to extract email content
 def get_email_body(service, msg_id):
+    """
+    Retrieves the plain-text body of an email message by its ID.
+
+    Args:
+        service: Authorized Gmail API service instance.
+        msg_id: The ID of the email message to retrieve.
+
+    Returns:
+        str: The decoded plain-text content of the email body.
+             Returns "No readable content found." if no plain-text part is found.
+    """
     msg = service.users().messages().get(userId='me', id=msg_id, format='full').execute()
     parts = msg['payload'].get('parts', [])
     for part in parts:
@@ -67,11 +99,35 @@ def get_email_body(service, msg_id):
             return text
     return "No readable content found."
 
+#Function to mark emails as read
+def mark_email_as_read(service, msg_id):
+    """
+    Marks a Gmail message as read by removing the 'UNREAD' label.
+    
+    Args:
+        service: Authorized Gmail API service instance.
+        msg_id: The ID of the Gmail message to mark as read.
+    """
+    service.users().messages().modify(
+        userId='me',
+        id=msg_id,
+        body={'removeLabelIds': ['UNREAD']}
+    ).execute()
+    print(f"Email with ID {msg_id} marked as read.")
 
 #Function to summarize the email using gemini-2.5-flash
 model = genai.GenerativeModel('models/gemini-2.5-flash')
 
 def summarize_with_gemini(text):
+    """
+    Summarizes the given text using the Gemini generative AI model.
+
+    Args:
+        text: The input string (email body) to summarize.
+
+    Returns:
+        str: The summarized text output from the model.
+    """
     prompt = f"Summarize this email:\n\n{text}"
     response = model.generate_content(prompt)
     return response.text.strip()
@@ -80,6 +136,15 @@ def summarize_with_gemini(text):
 #Send the messege to the telegram
 
 def send_to_telegram(message):
+    """
+    Sends a message to a Telegram chat using a bot.
+
+    Args:
+        message: The string message to send to the Telegram chat.
+
+    Returns:
+        None
+    """
     token = os.getenv('TELEGRAM_BOT_TOKEN')
     chat_id = os.getenv('TELEGRAM_CHAT_ID')
     url = f"https://api.telegram.org/bot{token}/sendMessage"
@@ -113,4 +178,5 @@ else:
         text = get_email_body(service, msg['id'])
         summary = summarize_with_gemini(text)
         send_to_telegram(f"📧 New Email Summary:\n{summary}")
+        mark_email_as_read(service, msg['id'])
         print("processed email with ID:", msg['id'])
